@@ -1,0 +1,13 @@
+
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+/venv
+.env
+site.db
+instance/
+*.pyc
+*.log
+config.py
+/.vscode

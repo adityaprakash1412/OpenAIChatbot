@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #chat-container {
+            max-width: 600px;
+            margin: auto;
+        }
+        #chat-history {
+            border: 1px solid #ccc;
+            padding: 10px;
+            height: 300px;
+            overflow-y: scroll;
+        }
+        #user-input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        #submit-btn {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    
+    <div id="chat-container">
+        <div style="text-align: right; padding-top: 10px;">
+            <button onclick="logout()">Logout</button>
+        </div>
+        <div id="chat-history"></div>
+        <input type="text" id="user-input" placeholder="Type your question...">
+        <button id="submit-btn" onclick="sendMessage()">Send</button>
+    </div>
+    
+    <script>
+       function sendMessage() {
+    var user_input = document.getElementById('user-input').value;
+    if (user_input.trim() === '') return;
+
+    var chat_history = document.getElementById('chat-history');
+    chat_history.innerHTML += '<p>User: ' + user_input + '</p>';
+
+    fetch('/ask', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: 'user_input=' + encodeURIComponent(user_input),
+    })
+    .then(response => response.json())
+    .then(data => {
+        var answer = data.answer;
+
+        var words = answer.split(' ');
+
+        words.forEach((word, index) => {
+            setTimeout(() => {
+                chat_history.innerHTML += ' ' + word;
+                chat_history.scrollTop = chat_history.scrollHeight;
+            }, index * 100); // Adjust the delay as needed
+        });
+
+        setTimeout(() => {
+            chat_history.innerHTML += '<br>';
+            chat_history.scrollTop = chat_history.scrollHeight;
+        }, words.length * 500);
+    });
+
+    document.getElementById('user-input').value = '';
+}
+function logout() {
+            window.location.href = "/logout";
+        }
+
+
+    </script>
+</body>
+</html>
